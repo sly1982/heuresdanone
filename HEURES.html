@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centrale Danone - Code Secret</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .message {
+            margin-top: 10px;
+            font-size: 20px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .grid button {
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+        }
+        .grid button:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+    <h1>CENTRALE DANONE</h1>
+    <p>Veuillez insérer le code secret pour passer à l'étape supérieure</p>
+    <div id="codeDisplay" class="message"></div>
+    <div class="grid">
+        <button onclick="enterDigit(1)">1</button>
+        <button onclick="enterDigit(2)">2</button>
+        <button onclick="enterDigit(3)">3</button>
+        <button onclick="enterDigit(4)">4</button>
+        <button onclick="enterDigit(5)">5</button>
+        <button onclick="enterDigit(6)">6</button>
+        <button onclick="enterDigit(7)">7</button>
+        <button onclick="enterDigit(8)">8</button>
+        <button onclick="enterDigit(9)">9</button>
+        <button onclick="enterDigit(0)">0</button>
+    </div>
+    <p id="result" class="message"></p>
+    <script>
+        let inputCode = "";
+        const correctCode = "605";
+
+        function enterDigit(digit) {
+            if (inputCode.length < 3) {
+                inputCode += digit;
+                document.getElementById("codeDisplay").innerText = inputCode;
+            }
+            if (inputCode.length === 3) {
+                checkCode();
+            }
+        }
+
+        function checkCode() {
+            if (inputCode === correctCode) {
+                document.getElementById("result").innerHTML = "<b>CORRECT</b>";
+            } else {
+                document.getElementById("result").innerHTML = "<b>INCORRECT</b>";
+                setTimeout(() => {
+                    inputCode = "";
+                    document.getElementById("codeDisplay").innerText = "";
+                    document.getElementById("result").innerHTML = "";
+                }, 1500);
+            }
+        }
+
+        // Effet Matrix
+        const canvas = document.getElementById("matrix");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".split("");
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillStyle = Math.random() > 0.5 ? "red" : "blue";
+                ctx.font = fontSize + "px monospace";
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 33);
+    </script>
+</body>
+</html>
